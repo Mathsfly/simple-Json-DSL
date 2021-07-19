@@ -138,8 +138,6 @@ class DSLJsonToQuery:
         return QueryHandler(True, left_parenthese + operator.join(map(str, exp_list)) + right_parenthese)
 
     def simple_select(self, dsl_loaded_query):
-
-        """Step 1"""
         """False is not valid query, True is good query """
 
         if not dsl_loaded_query or not isinstance(dsl_loaded_query, dict):
@@ -160,8 +158,6 @@ class DSLJsonToQuery:
         return QueryHandler(True, "SELECT " + ", ".join(map(str, dsl_loaded_query["fields"])) + " FROM " + self.get_sql_table_name())
 
     def select_with_filter(self, dsl_loaded_query):
-
-        """Step 2"""
         """False is not valid query, True is good query """
 
         res = self.simple_select(dsl_loaded_query)
@@ -186,7 +182,6 @@ class DSLJsonToQuery:
         return QueryHandler(True, res.get_message() + " WHERE " + condition.get_message())
 
     def select_with_filter_compounding(self, dsl_loaded_query):
-        """Step 4"""
         """False is not valid query, True is good query """
         res = self.select_with_filter(dsl_loaded_query)
 
