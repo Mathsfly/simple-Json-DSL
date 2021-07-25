@@ -1,18 +1,31 @@
-from api.DSLJsonToSQL import DSLJsonToQuery
+from api.selectdsl import SelectDSL
 import json
 import unittest
 
-engineDSLToQuery = DSLJsonToQuery("", "")
+selectJsonToQuery = SelectDSL("", '{ \n'
+            '"name": "towns",\n'
+            '"elements":\n'
+            '[\n'
+            '    { "name": "code", "type": "int" },\n'
+            '    { "name": "name", "type": "str" },\n'
+            '    { "name": "population", "type": "int" },\n'
+            '    { "name": "average_age", "type": "float" },\n'
+            '    { "name": "distr_code", "type": "int" },\n'
+            '    { "name": "dept_code", "type": "int" },\n'
+            '    { "name": "region_code", "type": "int" },\n'
+            '    { "name": "region_name", "type": "str" }\n'
+            ']\n'
+        '}')
 
 
 def test_Query(jsonInputStr, step):
     jsonInput = json.loads(jsonInputStr)
     if (step == 1):
-        res = engineDSLToQuery.simple_select(jsonInput)
+        res = selectJsonToQuery.simple_select(jsonInput)
     elif (step == 2):
-        res = engineDSLToQuery.select_with_filter(jsonInput)
+        res = selectJsonToQuery.select_with_filter(jsonInput)
     elif (step == 3):
-        res = engineDSLToQuery.select_with_filter_compounding(jsonInput)
+        res = selectJsonToQuery.select_with_filter_compounding(jsonInput)
 
     print("input: " + jsonInputStr)
 

@@ -1,4 +1,5 @@
 import json
+from cgitb import reset
 
 
 class QueryHandler:
@@ -20,12 +21,33 @@ class QueryHandler:
         return self.__filter_compouding
 
 
-class DSLJsonToQuery:
+class SelectDSL:
 
     def __init__(self, sql, table, config_sql=None):
         """ Declare some thing for connect and execute sql"""
         """ Depend on table input we could get infos inside"""
-        self.__table = table
+        """ table:
+        {
+            name: "Town",
+            elements:
+            [
+                { "name": "code", "type": "int" },
+                { "name": "name", "type": "str" },
+                { "name": "population", "type": "int" },
+                { "name": "average_age", "type": "float" },
+                { "name": "distr_code", "type": "int" },
+                { "name": "dept_code", "type": "int" },
+                { "name": "region_code", "type": "int" },
+                { "name": "region_name", "type": "str" }
+            ]
+        }
+        
+        sql : type of sql,
+        
+        config: some special config for sdl
+        
+        """
+        self.__table = json.loads(table)
         self.__sql = sql
         self.__config_sql = config_sql
 
@@ -38,11 +60,23 @@ class DSLJsonToQuery:
 
     def get_sql_table_name(self):
         """Get table name from self.table"""
-        return "towns"
+        if "name" in self.__table:
+            return self.__table["name"];
+        
+        return None
 
     def get_fields_from_table(self):
         """Get fields name form self.table"""
-        return ["code", "name", "population", "average_age", "distr_code", "dept_code", "region_code", "region_name"]
+        """i.e: ["code", "name", "population", "average_age", "distr_code", "dept_code", "region_code", "region_name"]"""
+        res = []
+        if not "elements" in self.__table:
+            return res
+        
+        for element in self.__table["elements"]:
+            if "name" in element:
+                res.append(element["name"])
+        
+        return res
 
     def is_valid_expression(self, field, value):
         """check if expression valid """
@@ -140,7 +174,7 @@ class DSLJsonToQuery:
     def simple_select(self, dsl_loaded_query):
         """False is not valid query, True is good query """
 
-        if not dsl_loaded_query or not isinstance(dsl_loaded_query, dict):
+        if not self.get_fields_from_table() or not self.get_sql_table_name() or not dsl_loaded_query or not isinstance(dsl_loaded_query, dict):
             return QueryHandler(False, "The format is not correct")
 
         if not "fields" in dsl_loaded_query:
